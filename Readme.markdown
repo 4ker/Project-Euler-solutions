@@ -1,20 +1,45 @@
 Project Euler solutions
 =======================
 
-A collection of Nayuki's program code to solve over 200 Project Euler math problems.
+```python
+ans = max(i * j
+    for i in range(100, 1000)
+    for j in range(100, 1000)
+    if str(i * j) == str(i * j)[ : : -1])
+return str(ans)
 
-Every solved problem has a program written in Java and usually Python. Some solutions also have Mathematica and Haskell programs. Some solution programs include a detailed mathematical explanation/proof in the comments to justify the code's logic.
+import eulerlib, itertools, sys
+if sys.version_info.major == 2:
+    filter = itertools.ifilter
 
-All problems from #1 to #100 have a Java and Python program, and problems #1 to #50 have a Mathematica program. This package contains at least 200 solutions in Java, at least 195 in Python, at least 120 in Mathematica, and at least 85 in Haskell.
+# Decorator. The underlying function must take only positional arguments, no keyword arguments.
+class memoize(object):
 
-Java solutions require JDK 7+. Python solutions are tested to work on CPython 2.7.10 and 3.4.3. Mathematica solutions are tested to work on Mathematica 5.1.
+        def __init__(self, func):
+                self.func = func
+                self.cache = {}
 
-Home page with background info, table of solutions, benchmark timings, and more: [https://www.nayuki.io/page/project-euler-solutions](https://www.nayuki.io/page/project-euler-solutions)
+        def __call__(self, *args):
+                if args in self.cache:
+                        return self.cache[args]
+                else:
+                        val = self.func(*args)
+                        self.cache[args] = val
+                        return val
 
-----
+def compute():
+        sys.setrecursionlimit(3000)
+        ans = max(range(1, 1000000), key=collatz_chain_length)
+        return str(ans)
 
-Copyright © 2018 Project Nayuki. All rights reserved. No warranty.
 
-This code is provided for reference only. You may republish any of this code verbatim with author and URL info intact.
-
-You need written permission from the author to make modifications to the code, include parts into your own work, etc.
+@eulerlib.memoize
+def collatz_chain_length(x):
+        if x == 1:
+                return 1
+        if x % 2 == 0:
+                y = x // 2
+        else:
+                y = x * 3 + 1
+        return collatz_chain_length(y) + 1
+```
